@@ -62,7 +62,8 @@ namespace minecraft_windows_service_wrapper.Factories
             // Set JAVA_HOME environment variable if specified
             if (!string.IsNullOrWhiteSpace(options.JavaHome))
             {
-                processStartInfo.Environment.Add("JAVA_HOME", javaHome);
+                // Use indexer assignment instead of Add to avoid exceptions when JAVA_HOME already exists
+                processStartInfo.Environment["JAVA_HOME"] = javaHome;
             }
 
             // Build arguments using strategies
