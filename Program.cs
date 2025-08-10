@@ -1,9 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging.EventLog;
 using Microsoft.Extensions.Logging;
-using CommandLine;
+using Microsoft.Extensions.Logging.EventLog;
+using System;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using minecraft_windows_service_wrapper.Factories;
 using minecraft_windows_service_wrapper.Options;
 using minecraft_windows_service_wrapper.Services;
@@ -12,55 +13,55 @@ using minecraft_windows_service_wrapper.Strategies.Minecraft;
 
 namespace minecraft_windows_service_wrapper
 {
-    class Program
+    internal static class Program
     {
-        static async Task<int> Main(string[] args)
+        [STAThread]
+        static async Task Main(string[] args)
         {
-            return await Parser.Default.ParseArguments<CommandLineOptions>(args)
-                .MapResult(async (opts) =>
-                {
-                    await CreateHostBuilder(args, opts).Build().RunAsync();
-                    return 0;
-                },
-                errs => Task.FromResult(-1)); // Invalid arguments
+            var options = SettingsService.Load();
+
+            if (Environment.UserInteractive)
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainForm());
+            }
+            else
+            {
+                await CreateHostBuilder(options).Build().RunAsync();
+            }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args, CommandLineOptions opts) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(configureLogging => 
-                    configureLogging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Information))
+        public static IHostBuilder CreateHostBuilder(MinecraftServerOptions opts) =>
+            Host.CreateDefaultBuilder()
+                .ConfigureLogging(logging =>
+                    logging.AddFilter<EventLogLoggerProvider>(level => level >= LogLevel.Information))
                 .ConfigureServices((hostContext, services) =>
                 {
-                    // Convert CommandLineOptions to MinecraftServerOptions and register
-                    var serverOptions = MinecraftServerOptions.FromCommandLineOptions(opts);
                     services.Configure<MinecraftServerOptions>(config =>
                     {
-                        config.ServerDirectory = serverOptions.ServerDirectory;
-                        config.MinecraftVersion = serverOptions.MinecraftVersion;
-                        config.Port = serverOptions.Port;
-                        config.JavaHome = serverOptions.JavaHome;
-                        config.JarFileName = serverOptions.JarFileName;
-                        config.MaxMemoryMB = serverOptions.MaxMemoryMB;
-                        config.MinMemoryMB = serverOptions.MinMemoryMB;
-                        config.EnableDetailedLogging = serverOptions.EnableDetailedLogging;
-                        config.GracefulShutdownTimeout = serverOptions.GracefulShutdownTimeout;
+                        config.ServerDirectory = opts.ServerDirectory;
+                        config.MinecraftVersion = opts.MinecraftVersion;
+                        config.Port = opts.Port;
+                        config.JavaHome = opts.JavaHome;
+                        config.JarFileName = opts.JarFileName;
+                        config.MaxMemoryMB = opts.MaxMemoryMB;
+                        config.MinMemoryMB = opts.MinMemoryMB;
+                        config.EnableDetailedLogging = opts.EnableDetailedLogging;
+                        config.GracefulShutdownTimeout = opts.GracefulShutdownTimeout;
                     });
 
-                    // Register core services
                     services.AddSingleton<IJavaVersionService, JavaVersionService>();
                     services.AddSingleton<IProcessManagerService, ProcessManagerService>();
                     services.AddSingleton<IArgumentsBuilderService, ArgumentsBuilderService>();
                     services.AddSingleton<IStreamRelayService, StreamRelayService>();
                     services.AddSingleton<IConfigurationValidatorService, ConfigurationValidatorService>();
 
-                    // Register strategy factories
                     services.AddSingleton<IJavaVersionStrategyFactory, JavaVersionStrategyFactory>();
                     services.AddSingleton<IMinecraftVersionStrategyFactory, MinecraftVersionStrategyFactory>();
 
-                    // Register factories
                     services.AddSingleton<IProcessFactory, ProcessFactory>();
 
-                    // Register the refactored hosted service
                     services.AddHostedService<MinecraftServer>()
                         .Configure<EventLogSettings>(config =>
                         {

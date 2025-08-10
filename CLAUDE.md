@@ -12,14 +12,14 @@ This is a Windows service wrapper for Minecraft Java Edition servers. It allows 
 # Build the project
 dotnet build
 
-# Run the application (for testing)
-dotnet run -- --help
+# Run the application (opens GUI)
+dotnet run
 
 # Publish for deployment
 dotnet publish -c Release -o publish
 
 # Install as Windows service (run as administrator)
-sc create MinecraftService binPath="C:\path\to\minecraft-windows-service-wrapper.exe --server-directory C:\path\to\minecraft --jar-filename server.jar"
+sc create MinecraftService binPath="C:\path\to\minecraft-windows-service-wrapper.exe"
 
 # Start/stop service
 sc start MinecraftService
@@ -30,8 +30,9 @@ sc stop MinecraftService
 
 ### Core Components
 
-- **Program.cs**: Entry point, sets up dependency injection, logging, and Windows service hosting
-- **CommandLineOptions.cs**: Command-line argument parsing and validation using CommandLineParser library
+- **Program.cs**: Entry point, sets up dependency injection, logging, GUI or Windows service hosting
+- **Gui/MainForm.cs**: Windows Forms interface for managing configuration and service installation
+- **Services/SettingsService.cs**: Handles reading and writing persistent configuration
 - **MinecraftServer.cs**: Main service logic implementing `BackgroundService` for the Minecraft server process
 
 ### Service Lifecycle
@@ -55,20 +56,12 @@ The service supports multiple Java LTS versions with optimized JVM arguments:
 
 ## Key Configuration
 
-### Required Command Line Arguments
-- `--server-directory`: Path to Minecraft server directory
-- `--jar-filename`: Name of the server JAR file
-
-### Optional Arguments
-- `--java-home`: Override JAVA_HOME environment variable
-- `--port`: Server port (defaults to -1, uses Minecraft default 25565)
-- `--minecraft-version`: Specify Minecraft version for argument compatibility
+Settings are managed through the GUI and persisted between launches. Configuration is stored in `%APPDATA%/MinecraftServiceWrapper/settings.json`.
 
 ## Dependencies
 
 - **Microsoft.Extensions.Hosting**: Windows service hosting framework
 - **Microsoft.Extensions.Logging**: Structured logging with Event Log provider
-- **CommandLineParser**: Command-line argument parsing and validation
 
 ## Logging Strategy
 
