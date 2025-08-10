@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -81,6 +82,29 @@ namespace MinecraftServer.Tests
                 File.Delete(jarPath);
                 Directory.Delete(tempDir);
             }
+        }
+
+        [Fact]
+        public void CreateJavaVersionDetectionProcess_SetsExpectedProperties()
+        {
+            // Arrange
+            var factory = new ProcessFactory(
+                Mock.Of<ILogger<ProcessFactory>>(),
+                Mock.Of<IJavaVersionService>(),
+                Mock.Of<IJavaVersionStrategyFactory>(),
+                Mock.Of<IMinecraftVersionStrategyFactory>());
+
+            // Act
+            var psi = factory.CreateJavaVersionDetectionProcess("java.exe");
+
+            // Assert
+            Assert.Equal("java.exe", psi.FileName);
+            Assert.Equal("-version", psi.Arguments);
+            Assert.True(psi.RedirectStandardInput);
+            Assert.True(psi.RedirectStandardOutput);
+            Assert.True(psi.RedirectStandardError);
+            Assert.False(psi.UseShellExecute);
+            Assert.Equal(ProcessWindowStyle.Hidden, psi.WindowStyle);
         }
     }
 }
