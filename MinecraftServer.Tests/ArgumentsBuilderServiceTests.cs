@@ -70,6 +70,27 @@ namespace MinecraftServer.Tests
         }
 
         [Theory]
+        [InlineData(12)]
+        [InlineData(16)]
+        public void BuildMinecraftArguments_WhenPortIsNegative_OmitsPortArgument(int minorVersion)
+        {
+            // Arrange
+            var options = new MinecraftServerOptions
+            {
+                MinecraftVersion = new Version(1, minorVersion, 0),
+                Port = -1
+            };
+
+            // Act
+            var result = _service.BuildMinecraftArguments(options);
+            var args = result.ToList();
+
+            // Assert
+            Assert.DoesNotContain("--port", args);
+            Assert.DoesNotContain("-1", args);
+        }
+
+        [Theory]
         [InlineData(8)]
         [InlineData(11)]
         [InlineData(17)]

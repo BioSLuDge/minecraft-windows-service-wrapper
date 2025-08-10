@@ -46,18 +46,24 @@ namespace minecraft_windows_service_wrapper.Services
 
             var args = new List<string>();
 
-            // Add GUI and port arguments based on Minecraft version
+            // Add GUI and optional port arguments based on Minecraft version
             if (options.MinecraftVersion.Minor == 12)
             {
                 args.Add("nogui");
-                args.Add("--port");
-                args.Add(options.Port.ToString());
+                if (options.Port >= 0)
+                {
+                    args.Add("--port");
+                    args.Add(options.Port.ToString());
+                }
             }
             else if (options.MinecraftVersion.Minor >= 16)
             {
                 args.Add("--nogui");
-                args.Add("--port");
-                args.Add(options.Port.ToString());
+                if (options.Port >= 0)
+                {
+                    args.Add("--port");
+                    args.Add(options.Port.ToString());
+                }
             }
             else
             {

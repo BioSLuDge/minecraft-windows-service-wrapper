@@ -20,10 +20,13 @@ namespace minecraft_windows_service_wrapper.Strategies.Minecraft
 
             // Minecraft 1.16+ uses '--nogui' with dashes
             yield return "--nogui";
-            yield return "--port";
-            
-            // Port handling: -1 means use default (25565)
-            yield return options.Port.ToString();
+
+            // Port handling: only specify when non-negative
+            if (options.Port >= 0)
+            {
+                yield return "--port";
+                yield return options.Port.ToString();
+            }
         }
     }
 }
