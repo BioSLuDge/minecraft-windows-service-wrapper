@@ -26,7 +26,7 @@ namespace minecraft_windows_service_wrapper.Services
             var args = new List<string>();
 
             // Memory settings
-            args.AddRange(GetMemoryArguments(javaVersion));
+            args.AddRange(GetMemoryArguments(options));
 
             // Garbage collection and performance arguments
             args.AddRange(GetGarbageCollectionArguments(javaVersion));
@@ -76,14 +76,13 @@ namespace minecraft_windows_service_wrapper.Services
             return javaArgs.Concat(minecraftArgs);
         }
 
-        private IEnumerable<string> GetMemoryArguments(int javaVersion)
+        private IEnumerable<string> GetMemoryArguments(MinecraftServerOptions options)
         {
-            return javaVersion switch
-            {
-                8 => new[] { "-Xmx8G", "-Xms3G" }, // Pixelmon recommends minimum 3G
-                11 or 17 or 21 => new[] { "-Xmx8G", "-Xms2G" },
-                _ => throw new NotSupportedException($"Java version {javaVersion} is not supported")
-            };
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+
+            yield return $"-Xmx{options.MaxMemoryMB}M";
+            yield return $"-Xms{options.MinMemoryMB}M";
         }
 
         private IEnumerable<string> GetGarbageCollectionArguments(int javaVersion)

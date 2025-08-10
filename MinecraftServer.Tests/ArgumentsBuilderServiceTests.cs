@@ -24,7 +24,9 @@ namespace MinecraftServer.Tests
                 ServerDirectory = @"C:\test\server",
                 MinecraftVersion = new Version(1, 16, 5),
                 Port = 25565,
-                JarFileName = "server.jar"
+                JarFileName = "server.jar",
+                MaxMemoryMB = 4096,
+                MinMemoryMB = 1024
             };
         }
 
@@ -43,7 +45,8 @@ namespace MinecraftServer.Tests
             var args = result.ToList();
 
             // Assert
-            Assert.Contains("-Xmx8G", args);
+            Assert.Contains("-Xmx4096M", args);
+            Assert.Contains("-Xms1024M", args);
             Assert.Contains("-jar", args);
             Assert.Contains(serverJarPath, args);
             Assert.True(args.Count > 5);
