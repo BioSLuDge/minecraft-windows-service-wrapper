@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using minecraft_windows_service_wrapper.Factories;
 using minecraft_windows_service_wrapper.Options;
 using minecraft_windows_service_wrapper.Services;
+using Microsoft.Extensions.Logging.Abstractions;
 using minecraft_windows_service_wrapper.Strategies.Java;
 using minecraft_windows_service_wrapper.Strategies.Minecraft;
 
@@ -24,7 +25,12 @@ namespace minecraft_windows_service_wrapper
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
+                
+                // Create JavaVersionService for the UI with proper error handling
+                var logger = NullLogger<JavaVersionService>.Instance;
+                var javaVersionService = new JavaVersionService(logger);
+                
+                Application.Run(new MainForm(javaVersionService));
             }
             else
             {

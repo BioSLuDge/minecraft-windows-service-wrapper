@@ -17,7 +17,7 @@ namespace minecraft_windows_service_wrapper.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<Process> StartProcessAsync(ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
+        public Task<Process> StartProcessAsync(ProcessStartInfo startInfo, CancellationToken cancellationToken = default)
         {
             if (startInfo == null)
                 throw new ArgumentNullException(nameof(startInfo));
@@ -38,7 +38,7 @@ namespace minecraft_windows_service_wrapper.Services
                 _currentProcess = process;
                 
                 _logger.LogInformation("Process started with PID: {ProcessId}", process.Id);
-                return process;
+                return Task.FromResult(process);
             }
             catch (Exception ex)
             {
