@@ -59,7 +59,6 @@ namespace minecraft_windows_service_wrapper
 
                     services.AddSingleton<IJavaVersionService, JavaVersionService>();
                     services.AddSingleton<IProcessManagerService, ProcessManagerService>();
-                    services.AddSingleton<IArgumentsBuilderService, ArgumentsBuilderService>();
                     services.AddSingleton<IStreamRelayService, StreamRelayService>();
                     services.AddSingleton<IConfigurationValidatorService, ConfigurationValidatorService>();
 
