@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using minecraft_windows_service_wrapper.Services;
-using minecraft_windows_service_wrapper;
+using minecraft_windows_service_wrapper.Options;
 
 namespace MinecraftServer.Tests
 {
@@ -12,13 +12,13 @@ namespace MinecraftServer.Tests
     {
         private readonly Mock<ILogger<ArgumentsBuilderService>> _mockLogger;
         private readonly ArgumentsBuilderService _service;
-        private readonly CommandLineOptions _defaultOptions;
+        private readonly MinecraftServerOptions _defaultOptions;
 
         public ArgumentsBuilderServiceTests()
         {
             _mockLogger = new Mock<ILogger<ArgumentsBuilderService>>();
             _service = new ArgumentsBuilderService(_mockLogger.Object);
-            _defaultOptions = new CommandLineOptions
+            _defaultOptions = new MinecraftServerOptions
             {
                 ServerDirectory = @"C:\test\server",
                 MinecraftVersion = new Version(1, 16, 5),
@@ -52,7 +52,7 @@ namespace MinecraftServer.Tests
         public void BuildMinecraftArguments_WhenMinecraft16Plus_UsesCorrectFormat()
         {
             // Arrange
-            var options = new CommandLineOptions
+            var options = new MinecraftServerOptions
             {
                 MinecraftVersion = new Version(1, 16, 5),
                 Port = 25565

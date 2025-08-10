@@ -95,20 +95,7 @@ namespace minecraft_windows_service_wrapper.Options
             return ValidationResult.Success;
         }
 
-        // Helper method to convert from CommandLineOptions
-        public static MinecraftServerOptions FromCommandLineOptions(CommandLineOptions cmdOptions)
-        {
-            if (cmdOptions == null)
-                throw new ArgumentNullException(nameof(cmdOptions));
-
-            return new MinecraftServerOptions
-            {
-                ServerDirectory = cmdOptions.ServerDirectory,
-                MinecraftVersion = cmdOptions.MinecraftVersion,
-                Port = cmdOptions.Port,
-                JavaHome = cmdOptions.JavaHome,
-                JarFileName = cmdOptions.JarFileName
-            };
-        }
+        // Helper method to provide sensible defaults
+        public static MinecraftServerOptions CreateDefault() => new MinecraftServerOptions();
     }
 }

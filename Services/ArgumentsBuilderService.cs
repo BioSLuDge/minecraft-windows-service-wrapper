@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using minecraft_windows_service_wrapper.Options;
 
 namespace minecraft_windows_service_wrapper.Services
 {
@@ -14,7 +15,7 @@ namespace minecraft_windows_service_wrapper.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IEnumerable<string> BuildJavaArguments(int javaVersion, string serverJarPath, CommandLineOptions options)
+        public IEnumerable<string> BuildJavaArguments(int javaVersion, string serverJarPath, MinecraftServerOptions options)
         {
             if (string.IsNullOrWhiteSpace(serverJarPath))
                 throw new ArgumentException("Server JAR path cannot be null or empty", nameof(serverJarPath));
@@ -38,7 +39,7 @@ namespace minecraft_windows_service_wrapper.Services
             return args;
         }
 
-        public IEnumerable<string> BuildMinecraftArguments(CommandLineOptions options)
+        public IEnumerable<string> BuildMinecraftArguments(MinecraftServerOptions options)
         {
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
@@ -67,7 +68,7 @@ namespace minecraft_windows_service_wrapper.Services
             return args;
         }
 
-        public IEnumerable<string> BuildAllArguments(int javaVersion, string serverJarPath, CommandLineOptions options)
+        public IEnumerable<string> BuildAllArguments(int javaVersion, string serverJarPath, MinecraftServerOptions options)
         {
             var javaArgs = BuildJavaArguments(javaVersion, serverJarPath, options);
             var minecraftArgs = BuildMinecraftArguments(options);
