@@ -21,8 +21,22 @@ namespace minecraft_windows_service_wrapper.Services
             if (!File.Exists(path))
                 return MinecraftServerOptions.CreateDefault();
 
-            var json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<MinecraftServerOptions>(json) ?? MinecraftServerOptions.CreateDefault();
+            try
+            {
+                var json = File.ReadAllText(path);
+                return JsonSerializer.Deserialize<MinecraftServerOptions>(json)
+                    ?? MinecraftServerOptions.CreateDefault();
+            }
+            catch (IOException ex)
+            {
+                Console.Error.WriteLine($"Error reading settings file: {ex.Message}");
+            }
+            catch (JsonException ex)
+            {
+                Console.Error.WriteLine($"Error deserializing settings file: {ex.Message}");
+            }
+
+            return MinecraftServerOptions.CreateDefault();
         }
 
         public static void Save(MinecraftServerOptions options)
