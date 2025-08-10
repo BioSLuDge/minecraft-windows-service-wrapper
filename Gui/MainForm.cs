@@ -134,29 +134,18 @@ namespace minecraft_windows_service_wrapper
         {
             try
             {
-                // Debug: Show message before opening dialog
-                _versionBox.Text = "Opening file dialog...";
-                _versionBox.ForeColor = Color.Blue;
-                Application.DoEvents(); // Force UI update
-                
                 using var openFileDialog = new OpenFileDialog
                 {
                     Filter = "JAR files (*.jar)|*.jar|All files (*.*)|*.*",
-                    Title = "Select Minecraft Server JAR File"
+                    Title = "Select Minecraft Server JAR File",
                 };
 
-                _versionBox.Text = "Showing dialog...";
-                Application.DoEvents(); // Force UI update
-                
                 var result = openFileDialog.ShowDialog();
-                
-                _versionBox.Text = $"Dialog result: {result}";
-                Application.DoEvents(); // Force UI update
 
                 if (result == DialogResult.OK)
                 {
                     _jarPathBox.Text = openFileDialog.FileName;
-                    
+
                     // Simple synchronous version detection
                     DetectVersionFromFilenameSynchronous(openFileDialog.FileName);
                 }
@@ -173,7 +162,7 @@ namespace minecraft_windows_service_wrapper
                 _versionBox.ForeColor = Color.Red;
             }
         }
-
+        
         private async Task LoadJavaVersionSafelyAsync()
         {
             await Task.Run(async () =>
