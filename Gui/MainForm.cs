@@ -366,9 +366,15 @@ namespace minecraft_windows_service_wrapper
                     try
                     {
                         await process.WaitForExitAsync(cts.Token);
-                        
+
                         var output = await process.StandardOutput.ReadToEndAsync();
                         var error = await process.StandardError.ReadToEndAsync();
+
+                        if (process.ExitCode != 0)
+                        {
+                            Debug.WriteLine($"Version detection failed with exit code {process.ExitCode}\nOutput: {output}\nError: {error}");
+                            return null;
+                        }
 
                         return ExtractMinecraftVersion(output + " " + error);
                     }
