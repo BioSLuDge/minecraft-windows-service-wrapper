@@ -17,7 +17,12 @@ namespace minecraft_windows_service_wrapper.Strategies.Java
                 { 8, new Java8Strategy() },
                 { 11, new Java11Strategy() },
                 { 17, new ModernJavaStrategy(17) },
-                { 21, new ModernJavaStrategy(21) }
+                { 18, new ModernJavaStrategy(18) },
+                { 19, new ModernJavaStrategy(19) },
+                { 20, new ModernJavaStrategy(20) },
+                { 21, new ModernJavaStrategy(21) },
+                { 22, new ModernJavaStrategy(22) },
+                { 23, new ModernJavaStrategy(23) }
             };
         }
 
@@ -29,13 +34,21 @@ namespace minecraft_windows_service_wrapper.Strategies.Java
                 return strategy;
             }
 
+            // For Java versions 17+, use ModernJavaStrategy as fallback
+            if (javaVersion >= 17)
+            {
+                _logger.LogDebug("Using ModernJavaStrategy fallback for Java version {Version}", javaVersion);
+                return new ModernJavaStrategy(javaVersion);
+            }
+
             _logger.LogError("No strategy found for Java version {Version}", javaVersion);
-            throw new NotSupportedException($"Java version {javaVersion} is not supported");
+            throw new NotSupportedException($"Java version {javaVersion} is not supported. Supported versions: 8, 11, 17+");
         }
 
         public bool IsVersionSupported(int javaVersion)
         {
-            return _strategies.ContainsKey(javaVersion);
+            // Explicitly supported versions or any modern version (17+)
+            return _strategies.ContainsKey(javaVersion) || javaVersion >= 17;
         }
     }
 }

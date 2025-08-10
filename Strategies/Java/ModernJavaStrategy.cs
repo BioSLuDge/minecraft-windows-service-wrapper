@@ -10,8 +10,9 @@ namespace minecraft_windows_service_wrapper.Strategies.Java
 
         public ModernJavaStrategy(int javaVersion)
         {
-            if (javaVersion != 17 && javaVersion != 21)
-                throw new ArgumentException($"ModernJavaStrategy only supports Java 17 and 21, got {javaVersion}");
+            // Support all modern Java versions (17+)
+            if (javaVersion < 17)
+                throw new ArgumentException($"ModernJavaStrategy only supports Java 17 and above, got {javaVersion}");
             
             SupportedJavaVersion = javaVersion;
         }
@@ -24,7 +25,7 @@ namespace minecraft_windows_service_wrapper.Strategies.Java
 
         public IEnumerable<string> GetGarbageCollectionArguments()
         {
-            // Aikar's flags for modern Java versions (17+)
+            // Aikar's flags for modern Java versions (17, 18, 19, 20, 21, 22, 23+)
             yield return "-XX:+UseG1GC";
             yield return "-XX:+ParallelRefProcEnabled";
             yield return "-XX:MaxGCPauseMillis=200";

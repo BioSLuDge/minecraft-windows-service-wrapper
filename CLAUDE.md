@@ -43,10 +43,10 @@ sc stop MinecraftService
 
 ### Java Version Support
 
-The service supports multiple Java LTS versions with optimized JVM arguments:
+The service supports multiple Java versions with optimized JVM arguments:
 - **Java 8**: Pixelmon-optimized flags (legacy modded servers)
-- **Java 11**: G1GC with experimental optimizations
-- **Java 17 & 21**: Aikar's flags for modern Minecraft servers
+- **Java 11**: G1GC with experimental optimizations  
+- **Java 17+**: Aikar's flags for modern Minecraft servers (supports 17, 18, 19, 20, 21, 22, 23, and future versions)
 
 ### Minecraft Version Support
 
